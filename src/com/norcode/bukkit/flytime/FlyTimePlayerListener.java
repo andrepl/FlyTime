@@ -29,6 +29,7 @@ public class FlyTimePlayerListener implements Listener {
 	public void onPlayerMove(PlayerMoveEvent ev) {
 		Player p = ev.getPlayer();
 		if (this.plugin.fallingPlayers.contains(p)) {
+			plugin.getLogger().info(p.getName() + " went from Y=" + ev.getFrom().getY() + " to " + ev.getTo().getY());
 			if (ev.getFrom().getY() < ev.getTo().getY()) {
 				plugin.getLogger().info(p.getName() + " was falling, but moved upward. not falling.");
 				this.plugin.fallingPlayers.remove(p);

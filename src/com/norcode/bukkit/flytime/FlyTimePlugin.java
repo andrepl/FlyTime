@@ -41,7 +41,19 @@ public class FlyTimePlugin extends JavaPlugin {
 			this.player.sendMessage("You have " + seconds + " seconds of FlyTime remaining.");
 		}
 	}
-	
+
+	public class SetFallingTask implements  Runnable {
+		private Player player;
+		public SetFallingTask(Player p) {
+			this.player = p;
+		}
+		@Override
+		public void run() {
+			getLogger().info("Adding " + player.getName() + " to falling players list.");
+			fallingPlayers.add(this.player);
+		}
+		
+	}
 	public class AutoDisabler implements Runnable {
 		private Player player;
 		public AutoDisabler(Player p) {
@@ -116,7 +128,7 @@ public class FlyTimePlugin extends JavaPlugin {
 		getServer().getScheduler().cancelTask(notifierIds.get(p));
 		if (getConfig().getBoolean("disableOnLanding", true) && !disabling) {
 			Integer disablerId = getServer().getScheduler()
-					.scheduleSyncDelayedTask(this, new AutoDisabler(p), 100);
+					.scheduleSyncDelayedTask(this, new AutoDisabler(p), getConfig().getLong("autodisable_ticks"));
 			disablerIds.put(p, disablerId);
 		}
 	}
@@ -136,18 +148,17 @@ public class FlyTimePlugin extends JavaPlugin {
 		
 		getLogger().info("Enabling Flight for " + p.getName());
 		p.sendMessage("Enabling FlyTime, you have " + (playerFlytimes.getLong(p.getName())/1000) + " seconds remaining.");
-		p.sendMessage("You have 5 seconds to begin flying before flytime is disabled.");
 		p.setAllowFlight(true);
 		enabledPlayers.add(p);
 		Integer disablerId = getServer().getScheduler()
-				.scheduleSyncDelayedTask(this, new AutoDisabler(p), 100);
+				.scheduleSyncDelayedTask(this, new AutoDisabler(p), getConfig().getLong("autodisable_ticks"));
 		disablerIds.put(p, disablerId);		
 	}
 	
 	
 	public void disableFlight(Player p) {
 		if (p.isFlying()) {
-			fallingPlayers.add(p);
+			getServer().getScheduler().scheduleSyncDelayedTask(this, new SetFallingTask(p), getConfig().getLong("fallprotect_ticks"));
 		}
 		if (flyingPlayers.containsKey(p)) {
 			endFlight(p, true);
@@ -164,7 +175,7 @@ public class FlyTimePlugin extends JavaPlugin {
 	public void startFlight(Player p) {
 		
 		int taskId = getServer().getScheduler()
-				.scheduleSyncRepeatingTask(this, new PlayerFlytimeNotifier(p), 100, 100);
+				.scheduleSyncRepeatingTask(this, new PlayerFlytimeNotifier(p), getConfig().getLong("notify_ticks"), getConfig().getLong("notify_ticks"));
 		
 		Integer disablerId = disablerIds.get(p);
 		if (disablerId != null) {
