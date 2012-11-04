@@ -1,0 +1,16 @@
+name: FlyTime
+main: com.norcode.bukkit.flytime.FlyTimePlugin
+version: 0.1.3
+depend: [Towny]
+commands:
+   flytime:
+      aliases: [ft, ftime]
+      description: FLY!
+      usage: /<command>
+      permissions: flytime.townflight
+      
+   flytime give:
+      aliases: ["ft give"]
+      description: Give Flytime to someone else.
+      usage: /<command> <player> <seconds>
+      permissions: flytime.give
