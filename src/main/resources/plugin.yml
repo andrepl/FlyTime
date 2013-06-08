@@ -1,0 +1,32 @@
+name: ${project.name}
+main: ${project.main}
+version: ${project.version}
+softdepend: [Towny, GriefPrevention, JSONAPI]
+commands:
+   flytime:
+      aliases: [ft, ftime]
+      description: FLY!
+      usage: /<command>
+      permissions: flytime.townflight
+      
+   flytime give:
+      aliases: ["ft give"]
+      description: Give Flytime to someone else.
+      usage: /<command> <player> <seconds>
+      permissions: flytime.give
+
+
+permissions:
+  flytime.admin:
+    default: op
+    children:
+      flytime.give: true
+      flytime.townflight.unlimited: true
+      flytime.townflight: true
+
+  flytime.give:
+    default: op
+  flytime.townflight:
+    default: op
+  flytime.townflight.unlimited:
+    default: op
